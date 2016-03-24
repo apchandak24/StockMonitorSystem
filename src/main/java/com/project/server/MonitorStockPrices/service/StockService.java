@@ -29,5 +29,9 @@ public class StockService {
 			return null;
 		}
 	}
+	
+	public ArrayList<StockModel> getSymbolHistory(Symbol symbol){
+		return dbService.getStocks(symbol);
+	}
 
 }
