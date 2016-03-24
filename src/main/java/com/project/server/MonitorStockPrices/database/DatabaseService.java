@@ -8,12 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+import com.project.server.MonitorStockPrices.model.StockModel;
 import com.project.server.MonitorStockPrices.model.Symbol;
 
 public class DatabaseService {
 	private static  final String SYMBOL_TABLE_NAME = "symbol"; 
 	private static final String DATABASE_NAME = "stock";
-	
+	private static final String STOCKS_TABLE_NAME ="stocks";
 	Connection dbConnection;
 	public DatabaseService() {
 		try {
@@ -71,6 +72,27 @@ public class DatabaseService {
 		}
 	     
 	}
+	public ArrayList<StockModel> getStocks(Symbol s){
+		ArrayList<StockModel> stocks = new ArrayList<>();
+		try {
+			Statement stmt = dbConnection.createStatement();
+			String query = "SELECT * from "+ STOCKS_TABLE_NAME +" where symbol LIKE '"+s.getSymbol() +"'";
+			ResultSet result = stmt.executeQuery(query);
+			while(result.next()){
+				StockModel stock = new StockModel();
+				stock.setName(result.getString("name"));
+				stock.setPrice(result.getDouble("price"));
+				stock.setSymbol(result.getString("symbol"));
+				stock.setVolume(result.getLong("volume"));
+				stock.setTs(result.getLong("timestamp"));
+				stocks.add(stock);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return stocks;
+	}
+	
 	
 	private void createDatabase(){
 		try {

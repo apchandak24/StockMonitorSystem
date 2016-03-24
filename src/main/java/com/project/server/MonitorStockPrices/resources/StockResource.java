@@ -6,9 +6,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.project.server.MonitorStockPrices.model.StockModel;
 import com.project.server.MonitorStockPrices.model.Symbol;
 import com.project.server.MonitorStockPrices.service.StockService;
 
@@ -34,6 +36,11 @@ public class StockResource {
 	@POST
 	public Symbol addSymbol(Symbol symbol){
 		return stockService.addSymbol(symbol);
+	}
+	@GET
+	@Path("/history/{symbol}")
+	public ArrayList<StockModel> getStockHistory(@PathParam("symbol") Symbol symbol ){
+		return stockService.getSymbolHistory(symbol);
 	}
 	
 }
