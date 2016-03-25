@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.project.server.MonitorStockPrices.HttpRequest.GetStockPrice;
 import com.project.server.MonitorStockPrices.database.DatabaseClass;
 import com.project.server.MonitorStockPrices.database.DatabaseService;
+import com.project.server.MonitorStockPrices.database.PropertiesInstance;
 import com.project.server.MonitorStockPrices.model.Resources;
 import com.project.server.MonitorStockPrices.model.StockModel;
 import com.project.server.MonitorStockPrices.model.Symbol;
@@ -32,7 +33,7 @@ public class StockService {
 	 * @return ArrayList<Symbol>
 	 */
 	public ArrayList<Symbol> getSymbolList() {
-		Connection dbConnection = DatabaseClass.getConnection(loadPropertiesFile());
+		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
 			ArrayList<Symbol> list = dbService.getSymbolList(dbConnection);
 			return list;
@@ -56,7 +57,7 @@ public class StockService {
 	 * @return
 	 */
 	public Symbol addSymbol(Symbol symbol) {
-		Connection dbConnection = DatabaseClass.getConnection(loadPropertiesFile());
+		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
 			GetStockPrice getPrice = new GetStockPrice();
 			ArrayList<Resources> stocks = getPrice.getStockPrices(symbol.getSymbol());
@@ -92,7 +93,7 @@ public class StockService {
 	 */
 
 	public ArrayList<StockModel> getSymbolHistory(Symbol symbol) {
-		Connection dbConnection = DatabaseClass.getConnection(loadPropertiesFile());
+		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
 			return dbService.getStocks(symbol, dbConnection);
 		} finally {
@@ -117,7 +118,7 @@ public class StockService {
 	 * @return ArrayList<StockModel>
 	 */
 	public ArrayList<StockModel> getSymbolHistoryInRange(Symbol symbol, long startDate, long endDate) {
-		Connection dbConnection = DatabaseClass.getConnection(loadPropertiesFile());
+		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
 			return dbService.getStocksInRange(symbol, startDate, endDate, dbConnection);
 		} finally {
@@ -139,7 +140,7 @@ public class StockService {
 	 * @param symbol
 	 */
 	public void deleteSymbol(Symbol symbol) {
-		Connection dbConnection = DatabaseClass.getConnection(loadPropertiesFile());
+		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
 			dbService.deleteSymbol(symbol, dbConnection);
 		} finally {
@@ -153,17 +154,4 @@ public class StockService {
 		}
 
 	}
-
-	private Properties loadPropertiesFile() {
-		Properties properties = new Properties();
-		try {
-			InputStream input = null;
-			input = getClass().getClassLoader().getResourceAsStream("config/config.properties");
-			properties.load(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return properties;
-	}
-
 }
