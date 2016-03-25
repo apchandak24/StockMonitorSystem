@@ -1,6 +1,11 @@
 package com.project.server.MonitorStockPrices.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+/**
+ * Model class to store symbol name.
+ * @author ankita
+ *
+ */
 
 @XmlRootElement
 public class Symbol {

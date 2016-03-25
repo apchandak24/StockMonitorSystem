@@ -52,7 +52,7 @@
 					id="listform">
 					<input type="submit" value="Get Symbol List"></input>
 				</form>
-				<table id="symbolList"></table>
+				<table id="symbolList" class="table table-bordered"></table>
 			</div>
 			<div class="col-md-6">
 				<h2>Get Stock Information</h2>

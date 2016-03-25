@@ -5,9 +5,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+/**
+ * Helper class to get the database connection object.
+ * It reads database name, user name and password from properties file
+ * @author ankita
+ */
 public class DatabaseClass {
 
-
+	/*
+	 * Get the Database connection object
+	 */
 	public static Connection getConnection(Properties properties){
 		try {
 			

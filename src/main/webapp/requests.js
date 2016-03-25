@@ -1,7 +1,7 @@
 function getSymbolList() {
 
 		request = $.ajax({
-			url : "resources/stocks/listsymbols",
+			url : "resources/stocks/symbols",
 			type : "get",
 			dataType : "json",
 			contentType : 'application/json'
@@ -9,9 +9,12 @@ function getSymbolList() {
 		request.done(function(response, textStatus, jqXHR) {
 			console.log(response);
 			$('#symbolList tr').remove();
+			var cnt=0;
 			for ( var i in response) {
 				var id = response[i].symbol;
 				tr = $('<tr/>');
+				var cnt = cnt+1;
+				tr.append("<td>" + cnt + "</td>");
 				tr.append("<td>" + response[i].symbol + "</td>");
 				$('#symbolList').append(tr);
 			}
@@ -25,6 +28,7 @@ function getSymbolList() {
 		});
 	}
 	function addSymbol() {
+		$("#response").text("");
 		var val = $('#symbolname').val().trim();
 		if (val) {
 			jsondata = "{\"symbol\":\"" + $('#symbolname').val() + "\"}";
@@ -38,7 +42,7 @@ function getSymbolList() {
 			request.done(function(response, textStatus, jqXHR) {
 				console.log(response);
 				if (typeof (response) === "undefined")
-					$("#response").text("Symbol already present");
+					$("#response").text("Symbol already present or is invalid");
 				else
 					$("#response").text("Symbol uploaded successfully");
 			});
@@ -138,6 +142,7 @@ function getSymbolList() {
 	}
 	function deleteSymbol() {
 		qurl = "resources/stocks/" + $('#symbolnamedelete').val().trim();
+		$("#responsed").text("");
 		request = $.ajax({
 			url : qurl,
 			type : "delete",
