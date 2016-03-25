@@ -38,7 +38,10 @@ public class StockResource {
 
 	@POST
 	public Symbol addSymbol(Symbol symbol) {
-		return stockService.addSymbol(symbol);
+		if (!symbol.getSymbol().isEmpty())
+			return stockService.addSymbol(symbol);
+		else
+			return null;
 	}
 
 	@GET
@@ -49,10 +52,10 @@ public class StockResource {
 		else
 			return stockService.getSymbolHistoryInRange(symbol, bean.getStartDate(), bean.getEndDate());
 	}
-	
+
 	@DELETE
 	@Path("/{symbol}")
-	public void deleteSymbol(@PathParam("symbol") Symbol symbol){
+	public void deleteSymbol(@PathParam("symbol") Symbol symbol) {
 		stockService.deleteSymbol(symbol);
 	}
 
