@@ -12,7 +12,7 @@ import java.util.Properties;
  */
 public class DatabaseClass {
 
-	/*
+	/**
 	 * Get the Database connection object
 	 */
 	public static Connection getConnection(Properties properties){

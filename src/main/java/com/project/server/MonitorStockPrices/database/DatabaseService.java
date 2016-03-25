@@ -32,15 +32,19 @@ public class DatabaseService {
 	 */
 	public boolean insertSymbol(Symbol symbol, Connection dbConnection) {
 		createSymbolTable(dbConnection);
+		PreparedStatement stmt=null;
 		try {
 			String query = "INSERT INTO " + SYMBOL_TABLE_NAME + " (symbol) VALUES" + "(?)";
-			PreparedStatement stmt = dbConnection.prepareStatement(query);
+			stmt = dbConnection.prepareStatement(query);
 			stmt.setString(1, symbol.getSymbol());
 			stmt.executeUpdate();
 			return true;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return false;
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
 		}
 	}
 
@@ -52,16 +56,23 @@ public class DatabaseService {
 	 */
 	public ArrayList<Symbol> getSymbolList(Connection dbConnection) {
 		ArrayList<Symbol> symbols = new ArrayList<>();
+		Statement stmt=null;
+		ResultSet result=null;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			stmt = dbConnection.createStatement();
 			String query = "SELECT * from " + SYMBOL_TABLE_NAME;
-			ResultSet result = stmt.executeQuery(query);
+			result = stmt.executeQuery(query);
 			while (result.next()) {
 				Symbol sym = new Symbol(result.getString("symbol"));
 				symbols.add(sym);
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+			if(result!=null)
+				try {result.close();} catch (SQLException e) {e.printStackTrace();}
 		}
 		return symbols;
 	}
@@ -75,14 +86,18 @@ public class DatabaseService {
 	 */
 
 	private void createSymbolTable(Connection dbConnection) {
+		Statement stmt=null;
 		try {
-			Statement stmt = dbConnection.createStatement();
+		    stmt = dbConnection.createStatement();
 			String query = "CREATE TABLE IF NOT EXISTS " + SYMBOL_TABLE_NAME + " (id INTEGER NOT NULL AUTO_INCREMENT, "
 					+ " symbol VARCHAR(255) NOT NULL UNIQUE, " + " PRIMARY KEY ( id ))";
 
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
 		}
 
 	}
@@ -99,12 +114,14 @@ public class DatabaseService {
 	public ArrayList<StockModel> getStocks(Symbol s, Connection dbConnection) {
 		ArrayList<StockModel> stocks = new ArrayList<>();
 		int symId = getSymbolID(s.getSymbol(), dbConnection);
+		PreparedStatement stmt = null;
+		ResultSet result=null;
 		if (symId > 0) {
 			try {
 				String query = "SELECT * from " + STOCKS_TABLE_NAME + " where symbolid = ?";
-				PreparedStatement stmt = dbConnection.prepareStatement(query);
+			    stmt = dbConnection.prepareStatement(query);
 				stmt.setInt(1, symId);
-				ResultSet result = stmt.executeQuery();
+				 result = stmt.executeQuery();
 				while (result.next()) {
 					StockModel stock = new StockModel();
 					stock.setName(result.getString("name"));
@@ -116,6 +133,11 @@ public class DatabaseService {
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
+			}finally{
+				if(stmt!=null)
+					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+				if(result!=null)
+					try {result.close();} catch (SQLException e) {e.printStackTrace();}
 			}
 		}
 		return stocks;
@@ -136,12 +158,14 @@ public class DatabaseService {
 		Date startDate = new Date(start);
 		Date endDate = new Date(end);
 		int symId = getSymbolID(s.getSymbol(), dbConnection);
+		PreparedStatement stmt = null;
+		ResultSet result=null;
 		if (symId > 0) {
 			try {
 				String query = "SELECT * from " + STOCKS_TABLE_NAME + " where symbolid = ?";
-				PreparedStatement stmt = dbConnection.prepareStatement(query);
+				stmt = dbConnection.prepareStatement(query);
 				stmt.setInt(1, symId);
-				ResultSet result = stmt.executeQuery();
+				result = stmt.executeQuery();
 				while (result.next()) {
 					Date currentDate = new Date(result.getLong("timestamp") * 1000);
 					if (currentDate.equals(startDate) || currentDate.equals(endDate)
@@ -157,6 +181,11 @@ public class DatabaseService {
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
+			}finally{
+				if(stmt!=null)
+					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+				if(result!=null)
+					try {result.close();} catch (SQLException e) {e.printStackTrace();}
 			}
 		}
 		return stocks;
@@ -171,16 +200,23 @@ public class DatabaseService {
 	 */
 	private int getSymbolID(String symbol, Connection dbConnection) {
 		int id = -1;
+		PreparedStatement stmt = null;
+		ResultSet result=null;
 		try {
 			String query = "SELECT id from " + SYMBOL_TABLE_NAME + " where symbol LIKE ?";
-			PreparedStatement stmt = dbConnection.prepareStatement(query);
+			stmt = dbConnection.prepareStatement(query);
 			stmt.setString(1, symbol);
-			ResultSet result = stmt.executeQuery();
+			result = stmt.executeQuery();
 			while (result.next()) {
 				id = result.getInt("id");
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+			if(result!=null)
+				try {result.close();} catch (SQLException e) {e.printStackTrace();}
 		}
 		return id;
 	}
@@ -194,13 +230,13 @@ public class DatabaseService {
 	 */
 
 	public void deleteSymbol(Symbol symbol, Connection dbConnection) {
-		PreparedStatement preparedStatement = null;
+		PreparedStatement stmt = null;
 
 		String query = "DELETE from symbol WHERE symbol LIKE ?";
 		try {
-			preparedStatement = dbConnection.prepareStatement(query);
-			preparedStatement.setString(1, symbol.getSymbol());
-			preparedStatement.executeUpdate();
+			stmt = dbConnection.prepareStatement(query);
+			stmt.setString(1, symbol.getSymbol());
+			stmt.executeUpdate();
 
 			System.out.println("Symbol is deleted");
 
@@ -208,6 +244,10 @@ public class DatabaseService {
 
 			System.out.println(e.getMessage());
 
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+			
 		}
 	}
 	/**
@@ -218,12 +258,14 @@ public class DatabaseService {
 	 */
 	public boolean insertStockData(StockModel stock, Connection dbConnection) {
 		createStocksTable(dbConnection);
+		PreparedStatement stmt = null;
+
 		int id = getSymbolID(stock.getSymbol(), dbConnection);
 		if (id != -1) {
 			try {
 				String query = "INSERT INTO " + STOCKS_TABLE_NAME + " (symbolid, name, price, volume, timestamp) VALUES"
 						+ "(?,?,?,?,?)";
-				PreparedStatement stmt = dbConnection.prepareStatement(query);
+		        stmt = dbConnection.prepareStatement(query);
 				stmt.setInt(1, id);
 				stmt.setString(2, stock.getName());
 				stmt.setDouble(3, stock.getPrice());
@@ -233,6 +275,10 @@ public class DatabaseService {
 				return true;
 			} catch (SQLException exception) {
 				System.out.println(exception.getMessage());
+			}finally{
+				if(stmt!=null)
+					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+				
 			}
 		}
 		return false;
@@ -247,8 +293,9 @@ public class DatabaseService {
 	 * @param dbConnection
 	 */
 	private void createStocksTable(Connection dbConnection) {
+		Statement stmt=null;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			stmt = dbConnection.createStatement();
 			String query = "CREATE TABLE IF NOT EXISTS " + STOCKS_TABLE_NAME + " (" + " symbolid INTEGER NOT NULL, "
 					+ " name VARCHAR(255), " + " price DOUBLE, volume BIGINT, timestamp BIGINT, "
 					+ " PRIMARY KEY (symbolid,timestamp), "
@@ -256,6 +303,10 @@ public class DatabaseService {
 			stmt.executeUpdate(query);
 		} catch (SQLException exception) {
 			System.out.println(exception.getMessage());
+		}finally{
+			if(stmt!=null)
+				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
+			
 		}
 
 	}
