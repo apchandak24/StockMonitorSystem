@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import com.project.server.MonitorStockPrices.model.StockModel;
 import com.project.server.MonitorStockPrices.model.Symbol;
 
@@ -17,9 +19,8 @@ import com.project.server.MonitorStockPrices.model.Symbol;
  */
 public class DatabaseService {
 	private static final String SYMBOL_TABLE_NAME = "symbol";
-	private static final String DATABASE_NAME = "stock";
 	private static final String STOCKS_TABLE_NAME = "stocks";
-
+	final static Logger logger = Logger.getLogger(DatabaseService.class);
 	public DatabaseService() {
 	}
 
@@ -38,9 +39,10 @@ public class DatabaseService {
 			stmt = dbConnection.prepareStatement(query);
 			stmt.setString(1, symbol.getSymbol());
 			stmt.executeUpdate();
+			logger.info("Symbol inserted "+symbol.getSymbol());
 			return true;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 		}finally{
 			if(stmt!=null)
@@ -66,8 +68,9 @@ public class DatabaseService {
 				Symbol sym = new Symbol(result.getString("symbol"));
 				symbols.add(sym);
 			}
+			logger.info("Get Symbol list "+symbols.toString());
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}finally{
 			if(stmt!=null)
 				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -93,8 +96,9 @@ public class DatabaseService {
 					+ " symbol VARCHAR(255) NOT NULL UNIQUE, " + " PRIMARY KEY ( id ))";
 
 			stmt.executeUpdate(query);
+			logger.info("Symbol table created");
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}finally{
 			if(stmt!=null)
 				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -131,8 +135,9 @@ public class DatabaseService {
 					stock.setTs(result.getLong("timestamp"));
 					stocks.add(stock);
 				}
+				logger.info("Retrieved Stock Information "+stocks.toString());
 			} catch (SQLException e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 			}finally{
 				if(stmt!=null)
 					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -179,8 +184,9 @@ public class DatabaseService {
 						stocks.add(stock);
 					}
 				}
+				logger.info("Retrieved Stock Information in range "+stocks.toString());
 			} catch (SQLException e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 			}finally{
 				if(stmt!=null)
 					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -210,8 +216,9 @@ public class DatabaseService {
 			while (result.next()) {
 				id = result.getInt("id");
 			}
+			logger.info("retrieve symbol ID");
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}finally{
 			if(stmt!=null)
 				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -239,16 +246,16 @@ public class DatabaseService {
 			int status = stmt.executeUpdate();
 			
 			if(status>0){
-				System.out.println("Symbol is deleted ");
+				logger.info("Symbol deleted");
 				return true;
 			}
-			else
+			else{
+				logger.info("symbol not present");
 				return false;
-		
+			}
 
 		} catch (SQLException e) {
-
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 
 		}finally{
@@ -279,9 +286,10 @@ public class DatabaseService {
 				stmt.setLong(4, stock.getVolume());
 				stmt.setLong(5, stock.getTs());
 				stmt.executeUpdate();
+				logger.info("stock inserted into database "+stock.toString());
 				return true;
 			} catch (SQLException exception) {
-				System.out.println(exception.getMessage());
+				logger.error(exception.getMessage());
 			}finally{
 				if(stmt!=null)
 					try {stmt.close();} catch (SQLException e) {e.printStackTrace();}
@@ -309,7 +317,7 @@ public class DatabaseService {
 					+ " FOREIGN KEY(symbolid) REFERENCES symbol(id)  ON DELETE CASCADE )";
 			stmt.executeUpdate(query);
 		} catch (SQLException exception) {
-			System.out.println(exception.getMessage());
+			logger.error(exception.getMessage());
 		}finally{
 			if(stmt!=null)
 				try {stmt.close();} catch (SQLException e) {e.printStackTrace();}

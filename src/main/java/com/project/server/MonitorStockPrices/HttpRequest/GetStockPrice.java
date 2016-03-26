@@ -10,11 +10,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.project.server.MonitorStockPrices.database.DatabaseService;
 import com.project.server.MonitorStockPrices.model.Resources;
 /**
  * Get the stock price for symbol from Yahoo web services
@@ -22,11 +25,13 @@ import com.project.server.MonitorStockPrices.model.Resources;
  *
  */
 public class GetStockPrice {
+	final static Logger logger = Logger.getLogger(GetStockPrice.class);
 	/**
 	 * Make HTTP request to fetch recent stock data from YAHOO web services
 	 * @param symbol
 	 * @return
 	 */
+	
 	
 	public ArrayList<Resources> getStockPrices(String symbol) {
 		ArrayList<Resources> stockList = new ArrayList<Resources>();
@@ -58,14 +63,14 @@ public class GetStockPrice {
 					in.close();
 
 				} else {
-					System.out.println("Some error has occured");
+					logger.info("some error has occured "+responseCode);
 				}
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (ProtocolException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		
 		return stockList;

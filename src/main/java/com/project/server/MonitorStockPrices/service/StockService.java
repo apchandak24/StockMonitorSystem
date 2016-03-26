@@ -1,11 +1,10 @@
 package com.project.server.MonitorStockPrices.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 import com.project.server.MonitorStockPrices.HttpRequest.GetStockPrice;
 import com.project.server.MonitorStockPrices.database.DatabaseClass;
@@ -26,7 +25,7 @@ import com.project.server.MonitorStockPrices.model.Symbol;
 public class StockService {
 
 	DatabaseService dbService = new DatabaseService();
-
+	final static Logger logger = Logger.getLogger(StockService.class);
 	/**
 	 * get the list of existing symbols added by user from database
 	 * 
@@ -42,7 +41,7 @@ public class StockService {
 				try {
 					dbConnection.close();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					logger.error(e.getMessage());
 				}
 		}
 	}
@@ -66,7 +65,6 @@ public class StockService {
 					for (Resources s : stocks) {
 						dbService.insertStockData(s.getResource().getFields(), dbConnection);
 					}
-					System.out.println("Symbol inserted successfully");
 					return symbol;
 				} else
 					return null;
@@ -78,7 +76,7 @@ public class StockService {
 				try {
 					dbConnection.close();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -101,7 +99,7 @@ public class StockService {
 				try {
 					dbConnection.close();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -126,7 +124,7 @@ public class StockService {
 				try {
 					dbConnection.close();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -148,7 +146,7 @@ public class StockService {
 				try {
 					dbConnection.close();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 		}
