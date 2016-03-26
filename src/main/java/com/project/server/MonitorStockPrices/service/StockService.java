@@ -139,10 +139,10 @@ public class StockService {
 	 * 
 	 * @param symbol
 	 */
-	public void deleteSymbol(Symbol symbol) {
+	public boolean deleteSymbol(Symbol symbol) {
 		Connection dbConnection = DatabaseClass.getConnection(PropertiesInstance.getInstance().getProperties());
 		try {
-			dbService.deleteSymbol(symbol, dbConnection);
+			return dbService.deleteSymbol(symbol, dbConnection);
 		} finally {
 			if (dbConnection != null) {
 				try {

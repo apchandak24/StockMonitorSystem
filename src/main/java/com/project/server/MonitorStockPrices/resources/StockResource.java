@@ -12,7 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.glassfish.jersey.message.internal.MsgTraceEvent;
+
 import com.project.server.MonitorStockPrices.bean.StockFilterBean;
+import com.project.server.MonitorStockPrices.model.Result;
 import com.project.server.MonitorStockPrices.model.StockModel;
 import com.project.server.MonitorStockPrices.model.Symbol;
 import com.project.server.MonitorStockPrices.service.StockService;
@@ -81,8 +84,10 @@ public class StockResource {
 	 */
 	@DELETE
 	@Path("/{symbol}")
-	public void deleteSymbol(@PathParam("symbol") Symbol symbol) {
-		stockService.deleteSymbol(symbol);
+	public Result deleteSymbol(@PathParam("symbol") Symbol symbol) {
+		Result result = new Result();
+		result.setResult(stockService.deleteSymbol(symbol));
+		return result;
 	}
 
 }

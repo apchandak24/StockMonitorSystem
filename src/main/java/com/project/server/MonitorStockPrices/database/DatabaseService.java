@@ -229,20 +229,27 @@ public class DatabaseService {
 	 * @param dbConnection
 	 */
 
-	public void deleteSymbol(Symbol symbol, Connection dbConnection) {
+	public boolean deleteSymbol(Symbol symbol, Connection dbConnection) {
 		PreparedStatement stmt = null;
 
 		String query = "DELETE from symbol WHERE symbol LIKE ?";
 		try {
 			stmt = dbConnection.prepareStatement(query);
 			stmt.setString(1, symbol.getSymbol());
-			stmt.executeUpdate();
-
-			System.out.println("Symbol is deleted");
+			int status = stmt.executeUpdate();
+			
+			if(status>0){
+				System.out.println("Symbol is deleted ");
+				return true;
+			}
+			else
+				return false;
+		
 
 		} catch (SQLException e) {
 
 			System.out.println(e.getMessage());
+			return false;
 
 		}finally{
 			if(stmt!=null)

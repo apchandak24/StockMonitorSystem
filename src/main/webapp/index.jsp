@@ -68,6 +68,7 @@
 						type="date" id="enddate"></input> <input type="time" id="endtime"></input>
 					<br> <br> Enter symbol name <input type="text"
 						id="symname"></input> <input type="submit" value="Get Data"></input>
+						<label id="errorhistory"></label>
 				</form>
 				<table id="stockdata" class="table table-bordered"></table>
 			</div>
