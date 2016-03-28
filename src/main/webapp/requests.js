@@ -71,12 +71,13 @@ function getSymbolData() {
 
 		var sdate = getDate(startDate, startTime).getTime();
 		var edate = getDate(endDate, endTime).getTime();
-		if (isNaN(sdate) || isNaN(eDate)) {
+		if (isNaN(sdate) || isNaN(edate)) {
 			$("#errorhistory").text("Invalid date and time values");
 			return;
 		} else {
 			qurl = "resources/stocks/history/" + $('#symname').val().trim()
 					+ "/?startDate=" + sdate + "&endDate=" + edate;
+			console.log(qurl);
 		}
 	}
 	request = $.ajax({
